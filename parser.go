@@ -99,6 +99,7 @@ type ParseContext struct {
 	argumenti       int // Cursor into arguments
 	// Flags, arguments and commands encountered and collected during parse.
 	Elements []*ParseElement
+	Warnings []Warning
 }
 
 func (p *ParseContext) nextArg() *ArgClause {
@@ -318,6 +319,8 @@ loop:
 				return err
 			} else if flag == HelpFlag {
 				ignoreDefault = true
+			} else if flag.deprecated {
+				context.Warnings = append(context.Warnings, DeprecatedFlag(flag.name))
 			}
 
 		case TokenArg:

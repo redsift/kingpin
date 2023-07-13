@@ -19,6 +19,16 @@ var (
 
 type ApplicationValidator func(*Application) error
 
+type Warning interface {
+	Warning() string
+}
+
+type DeprecatedFlag string
+
+func (f DeprecatedFlag) Warning() string {
+	return fmt.Sprintf("Use of deprecated flag %q", string(f))
+}
+
 // An Application contains the definitions of flags, arguments and commands
 // for an application.
 type Application struct {
@@ -39,6 +49,7 @@ type Application struct {
 	noInterspersed bool             // can flags be interspersed with args (or must they come first)
 	defaultEnvars  bool
 	completion     bool
+	warnings       []Warning
 
 	// Help flag. Exposed for user customisation.
 	HelpFlag *FlagClause

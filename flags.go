@@ -153,6 +153,7 @@ type FlagClause struct {
 	help          string
 	defaultValues []string
 	placeholder   string
+	deprecated    bool
 	hidden        bool
 	setByUser     *bool
 }
@@ -303,6 +304,12 @@ func (f *FlagClause) PlaceHolder(placeholder string) *FlagClause {
 // Hidden hides a flag from usage but still allows it to be used.
 func (f *FlagClause) Hidden() *FlagClause {
 	f.hidden = true
+	return f
+}
+
+// Deprecated marks a flag as deprecated. A warning will be generated if used.
+func (f *FlagClause) Deprecated() *FlagClause {
+	f.deprecated = true
 	return f
 }
 
