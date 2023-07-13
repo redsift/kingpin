@@ -202,7 +202,7 @@ func (a *Application) parseContext(ignoreDefault bool, args []string) (*ParseCon
 func (a *Application) Parse(args []string) (command string, err error) {
 
 	context, parseErr := a.ParseContext(args)
-	selected := []string{}
+	var selected []string
 	var setValuesErr error
 
 	if context == nil {
@@ -210,6 +210,8 @@ func (a *Application) Parse(args []string) (command string, err error) {
 		// where a context returns nil. Protect against that.
 		return "", parseErr
 	}
+
+	a.maybeWarnings(context)
 
 	if err = a.setDefaults(context); err != nil {
 		return "", err
@@ -267,6 +269,12 @@ func (a *Application) maybeHelp(context *ParseContext) {
 			context, _ = a.parseContext(true, context.rawArgs)
 			a.writeUsage(context, nil)
 		}
+	}
+}
+
+func (a *Application) maybeWarnings(context *ParseContext) {
+	for _, element := range context.Warnings {
+		fmt.Fprintf(a.errorWriter, "WARNING: %s\n", element.Warning())
 	}
 }
 
